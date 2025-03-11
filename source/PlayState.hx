@@ -10,6 +10,7 @@ class PlayState extends FlxState {
 		dumb = new FlxSprite3D();
 		dumb.loadGraphic("assets/images/image.png");
 		dumb.screenCenter();
+		dumb.antialiasing = true;
 		add(dumb);
 	}
 
