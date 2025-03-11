@@ -26,7 +26,15 @@ class FlxSprite3D extends FlxSprite {
 
 	override function drawComplex(camera:FlxCamera) {
 		_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
+		if (bakedRotationAngle <= 0) {
+			updateTrig();
+
+			rotateXYZ(angle3D);
+		}
+
+		
 		_matrix.translate(-origin.x, -origin.y);
+		
 
 		var _animOffset:FlxPoint = animation.curAnim?.offset ?? FlxPoint.weak();
 		if (frameOffsetAngle != null && frameOffsetAngle != angle) {
@@ -39,11 +47,6 @@ class FlxSprite3D extends FlxSprite {
 
 		_matrix.scale(scale.x, scale.y);
 
-		if (bakedRotationAngle <= 0) {
-			updateTrig();
-
-			rotateXYZ(angle3D);
-		}
 
 		getScreenPosition(_point, camera).subtract(offset);
 		_point.add(origin.x, origin.y);
@@ -82,8 +85,6 @@ class FlxSprite3D extends FlxSprite {
 	 * @see https://github.com/raysan5/raylib/blob/7f8bf2233c29ebbd98566962bb3730095b11a4e2/src/raymath.h#L1790
 	 */
 	private function rotateXYZ(angle:Vector3D) {
-		var result:Matrix3D = fromMatrix(_matrix);
-
 		var cosz:Float = cos(FlxAngle.asRadians(-angle.z));
 		var sinz:Float = sin(FlxAngle.asRadians(-angle.z));
 
@@ -93,18 +94,10 @@ class FlxSprite3D extends FlxSprite {
 		var cosx:Float = cos(FlxAngle.asRadians(-angle.x));
 		var sinx:Float = sin(FlxAngle.asRadians(-angle.x));
 
-		result.rawData[0] = cosz * cosy;
-		result.rawData[1] = (cosz * siny * sinx) - (sinz * cosx);
-		result.rawData[2] = (cosz * siny * cosx) + (sinz * sinx);
+		_matrix.a = cosz * cosy;
+		_matrix.b = (cosz * siny * sinx) - (sinz * cosx);
 
-		result.rawData[4] = sinz * cosy;
-		result.rawData[5] = (sinz * siny * sinx) + (cosz * cosx);
-		result.rawData[6] = (sinz * siny * cosx) - (cosz * sinx);
-
-		result.rawData[8] = -siny;
-		result.rawData[9] = cosy * sinx;
-		result.rawData[10] = cosy * cosx;
-
-		_matrix = toMatrix(result);
+		_matrix.c = sinz * cosy;
+		_matrix.d = (sinz * siny * sinx) + (cosz * cosx);
 	}
 }

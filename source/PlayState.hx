@@ -15,8 +15,7 @@ class PlayState extends FlxState {
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
-		dumb.angle3D.x = Math.sin(FlxG.game.ticks / 1000) * 180;
+		dumb.angle3D.x = 45;
 		dumb.angle3D.y = Math.cos(FlxG.game.ticks / 1000) * 180;
-		dumb.angle3D.z = Math.tan(FlxG.game.ticks / 1000) * 180;
 	}
 }
