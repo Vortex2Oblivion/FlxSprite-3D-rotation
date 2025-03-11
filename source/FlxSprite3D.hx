@@ -4,13 +4,12 @@ import Math.*;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
+import flixel.math.FlxAngle;
 import flixel.math.FlxMatrix;
 import flixel.math.FlxPoint;
 import openfl.Vector;
 import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
-
-using flixel.math.FlxAngle;
 
 class FlxSprite3D extends FlxSprite {
 	public var angle3D:Vector3D;
@@ -39,7 +38,7 @@ class FlxSprite3D extends FlxSprite {
 
 		var _animOffset:FlxPoint = animation.curAnim?.offset ?? FlxPoint.weak();
 		if (frameOffsetAngle != null && frameOffsetAngle != angle) {
-			var angleOff = (-angle + frameOffsetAngle).asRadians();
+			var angleOff = (-angle + frameOffsetAngle) * FlxAngle.TO_RAD;
 			_matrix.rotate(-angleOff);
 			_matrix.translate(-(frameOffset.x + _animOffset.x), -(frameOffset.y + _animOffset.y));
 			_matrix.rotate(angleOff);
@@ -86,17 +85,17 @@ class FlxSprite3D extends FlxSprite {
 	 * @see https://github.com/raysan5/raylib/blob/7f8bf2233c29ebbd98566962bb3730095b11a4e2/src/raymath.h#L1790
 	 */
 	private function rotateXYZ(angle:Vector3D) {
-		var cosz:Float = cos(-angle.z.asRadians());
-		var sinz:Float = sin(-angle.z.asRadians());
+		var cosz:Float = cos(FlxAngle.asRadians(-angle.z));
+		var sinz:Float = sin(FlxAngle.asRadians(-angle.z));
 
-		var cosy:Float = cos(-angle.y.asRadians());
-		var siny:Float = sin(-angle.y.asRadians());
+		var cosy:Float = cos(FlxAngle.asRadians(-angle.y));
+		var siny:Float = sin(FlxAngle.asRadians(-angle.y));
 
-		var cosx:Float = cos(-angle.x.asRadians());
-		var sinx:Float = sin(-angle.x.asRadians());
+		var cosx:Float = cos(FlxAngle.asRadians(-angle.x));
+		var sinx:Float = sin(FlxAngle.asRadians(-angle.x));
 
-		_matrix.a = (cosz * cosy);
-		_matrix.b = (cosz * siny * sinx * origin.y) - (sinz * cosx);
+		_matrix.a = cosz * cosy;
+		_matrix.b = (cosz * siny * sinx) - (sinz * cosx);
 
 		_matrix.c = sinz * cosy;
 		_matrix.d = (sinz * siny * sinx) + (cosz * cosx);
