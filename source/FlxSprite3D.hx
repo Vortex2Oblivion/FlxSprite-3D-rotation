@@ -10,8 +10,9 @@ import flixel.math.FlxPoint;
 import openfl.Vector;
 import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
+import flixel.addons.effects.FlxSkewedSprite;
 
-class FlxSprite3D extends FlxSprite {
+class FlxSprite3D extends FlxSkewedSprite {
 	public var angle3D:Vector3D;
 
 	override function initVars() {
@@ -19,26 +20,18 @@ class FlxSprite3D extends FlxSprite {
 		angle3D = new Vector3D(0, 0, 0);
 	}
 
-	override function set_angle(angle:Float):Float {
+	/*override function set_angle(angle:Float):Float {
 		angle3D.z = angle;
 		return super.set_angle(angle);
-	}
+	}*/
 
 	override function drawComplex(camera:FlxCamera) {
 		_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
-		if (bakedRotationAngle <= 0) {
-			updateTrig();
-
-			rotateXYZ(angle3D);
-		}
-
-		
 		_matrix.translate(-origin.x, -origin.y);
-		
 
 		var _animOffset:FlxPoint = animation.curAnim?.offset ?? FlxPoint.weak();
 		if (frameOffsetAngle != null && frameOffsetAngle != angle) {
-			var angleOff = (-angle + frameOffsetAngle) * FlxAngle.TO_RAD;
+			var angleOff = (-angle3D.z + frameOffsetAngle) * FlxAngle.TO_RAD;
 			_matrix.rotate(-angleOff);
 			_matrix.translate(-(frameOffset.x + _animOffset.x), -(frameOffset.y + _animOffset.y));
 			_matrix.rotate(angleOff);
@@ -46,6 +39,22 @@ class FlxSprite3D extends FlxSprite {
 			_matrix.translate(-(frameOffset.x + _animOffset.x), -(frameOffset.y + _animOffset.y));
 
 		_matrix.scale(scale.x, scale.y);
+
+		if (matrixExposed) {
+			_matrix.concat(transformMatrix);
+		} else {
+			if (bakedRotationAngle <= 0) {
+				updateTrig();
+
+				rotateXYZ(angle3D);
+
+				if (angle != 0)
+					_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+			}
+
+			updateSkewMatrix();
+			_matrix.concat(_skewMatrix);
+		}
 
 
 		getScreenPosition(_point, camera).subtract(offset);
