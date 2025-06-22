@@ -1,36 +1,37 @@
 package;
 
-import Math.*;
+import flixel.graphics.frames.FlxFrame;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
-import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.math.FlxAngle;
-import flixel.math.FlxMatrix;
 import flixel.math.FlxPoint;
-import openfl.Vector;
-import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
-import flixel.addons.effects.FlxSkewedSprite;
 
-class FlxSprite3D extends FlxSkewedSprite {
-	public var angle3D:Vector3D;
+/**
+ * Performs 3D rotations on a 2D FlxSprite
+ * @see https://math.stackexchange.com/questions/62182/how-do-i-rotate-a-matrix-transformation-with-a-centered-origin
+ * @see https://github.com/raysan5/raylib/blob/7f8bf2233c29ebbd98566962bb3730095b11a4e2/src/raymath.h#L1790
+ */
+class FlxSprite3D extends FlxSprite {
+	public var angle3D(default, null):Vector3D;
 
 	override function initVars() {
 		super.initVars();
 		angle3D = new Vector3D(0, 0, 0);
 	}
 
-	/*override function set_angle(angle:Float):Float {
-		angle3D.z = angle;
-		return super.set_angle(angle);
-	}*/
+	override function set_angle(Value:Float):Float {
+		angle3D.z = Value;
+		return super.set_angle(Value);
+	}
 
-	override function drawComplex(camera:FlxCamera) {
-		_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
+	override function drawFrameComplex(frame:FlxFrame, camera:FlxCamera) {
+		//super.drawFrameComplex(frame, camera);
+		frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
 		_matrix.translate(-origin.x, -origin.y);
 
 		var _animOffset:FlxPoint = animation.curAnim?.offset ?? FlxPoint.weak();
-		if (frameOffsetAngle != null && frameOffsetAngle != angle) {
+		if (frameOffsetAngle != null && frameOffsetAngle != angle3D.z) {
 			var angleOff = (-angle3D.z + frameOffsetAngle) * FlxAngle.TO_RAD;
 			_matrix.rotate(-angleOff);
 			_matrix.translate(-(frameOffset.x + _animOffset.x), -(frameOffset.y + _animOffset.y));
@@ -38,24 +39,19 @@ class FlxSprite3D extends FlxSkewedSprite {
 		} else
 			_matrix.translate(-(frameOffset.x + _animOffset.x), -(frameOffset.y + _animOffset.y));
 
-		_matrix.scale(scale.x, scale.y);
+		if (bakedRotationAngle <= 0) {
+			updateTrig();
 
-		if (matrixExposed) {
-			_matrix.concat(transformMatrix);
-		} else {
-			if (bakedRotationAngle <= 0) {
-				updateTrig();
+			rotateXYZ(angle3D);
 
-				rotateXYZ(angle3D);
+			//https://math.stackexchange.com/questions/62182/how-do-i-rotate-a-matrix-transformation-with-a-centered-origin
+			var xr:Float = -(_matrix.a * origin.x + _matrix.c * origin.y) + origin.x;
+			var yr:Float = -(_matrix.b * origin.x + _matrix.d * origin.y) + origin.y;
 
-				if (angle != 0)
-					_matrix.rotateWithTrig(_cosAngle, _sinAngle);
-			}
-
-			updateSkewMatrix();
-			_matrix.concat(_skewMatrix);
+			_matrix.translate(xr, yr);
 		}
 
+		_matrix.scale(scale.x, scale.y);
 
 		getScreenPosition(_point, camera).subtract(offset);
 		_point.add(origin.x, origin.y);
@@ -71,37 +67,19 @@ class FlxSprite3D extends FlxSkewedSprite {
 	}
 
 	/**
-	 * Converts a 3D matrix to a 2D matrix
-	 * @param m 
-	 * @see https://github.com/Dot-Stuff/flxanimate/blob/7da385ca7fd8d8067aac03bc39798d37c5598e45/flxanimate/geom/FlxMatrix3D.hx#L43
-	 */
-	private inline function toMatrix(m:Matrix3D) {
-		return new FlxMatrix(m.rawData[0], m.rawData[1], m.rawData[4], m.rawData[5], m.rawData[12], m.rawData[13]);
-	}
-
-	/**
-	 * Converts a 2D matrix to a 3D matrix
-	 * @param m 
-	 * @see https://github.com/Dot-Stuff/flxanimate/blob/7da385ca7fd8d8067aac03bc39798d37c5598e45/flxanimate/geom/FlxMatrix3D.hx#L48
-	 */
-	public static function fromMatrix(m:FlxMatrix) {
-		return new Matrix3D(new Vector([m.a, m.b, 0.0, m.c, m.d, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, m.tx, m.ty, 0.0, 0.0, 1.0]));
-	}
-
-	/**
 	 * Rotates a matrix based on X Y and Z angles
 	 * @param angle 
 	 * @see https://github.com/raysan5/raylib/blob/7f8bf2233c29ebbd98566962bb3730095b11a4e2/src/raymath.h#L1790
 	 */
 	private function rotateXYZ(angle:Vector3D) {
-		var cosz:Float = cos(FlxAngle.asRadians(-angle.z));
-		var sinz:Float = sin(FlxAngle.asRadians(-angle.z));
+		var cosz:Float = Math.cos(FlxAngle.asRadians(-angle.z - frame.angle));
+		var sinz:Float = Math.sin(FlxAngle.asRadians(-angle.z - frame.angle));
 
-		var cosy:Float = cos(FlxAngle.asRadians(-angle.y));
-		var siny:Float = sin(FlxAngle.asRadians(-angle.y));
+		var cosy:Float = Math.cos(FlxAngle.asRadians(-angle.y));
+		var siny:Float = Math.sin(FlxAngle.asRadians(-angle.y));
 
-		var cosx:Float = cos(FlxAngle.asRadians(-angle.x));
-		var sinx:Float = sin(FlxAngle.asRadians(-angle.x));
+		var cosx:Float = Math.cos(FlxAngle.asRadians(-angle.x));
+		var sinx:Float = Math.sin(FlxAngle.asRadians(-angle.x));
 
 		_matrix.a = cosz * cosy;
 		_matrix.b = (cosz * siny * sinx) - (sinz * cosx);
