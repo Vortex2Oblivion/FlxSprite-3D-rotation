@@ -13,7 +13,6 @@ class PlayState extends FlxState {
 		for(anim in ["idle", "singDOWN", "singUP", "singLEFT", "singRIGHT"]){
 			dumb.animation.addByPrefix(anim, anim, 24, false);
 		}
-		FlxG.camera.zoom = 0.5;
 		dumb.screenCenter();
 		dumb.antialiasing = true;
 		add(dumb);
