@@ -1,7 +1,6 @@
 package;
 
 import flixel.math.FlxMatrix;
-import openfl.geom.Matrix;
 import flixel.graphics.frames.FlxFrame;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
@@ -16,13 +15,17 @@ import openfl.geom.Vector3D;
  */
 class FlxSprite3D extends FlxSprite {
 	public var angle3D(default, null):Vector3D;
+	public var skew3D(default, null):Vector3D;
 
 	private var _rotationMatrix(default, null):FlxMatrix;
+	private var _skewMatrix(default, null):FlxMatrix;
 
 	override function initVars() {
 		super.initVars();
 		_rotationMatrix = new FlxMatrix();
+		_skewMatrix = new FlxMatrix();
 		angle3D = new Vector3D();
+		skew3D = new Vector3D();
 	}
 
 	override function set_angle(Value:Float):Float {
@@ -39,17 +42,21 @@ class FlxSprite3D extends FlxSprite {
 			if (angle != 0) {
 				matrix.rotateWithTrig(_cosAngle, _sinAngle);
 			}
+			if (skew3D.x != 0 || skew3D.y != 0) {
+				_skewMatrix.b = Math.tan(skew3D.y * FlxAngle.TO_RAD);
+				_skewMatrix.c = Math.tan(skew3D.x * FlxAngle.TO_RAD);
+			}
 			// https://math.stackexchange.com/questions/62182/how-do-i-rotate-a-matrix-transformation-with-a-centered-origin
 			// offset
 			var xr:Float = -(matrix.a * origin.x + matrix.c * origin.y) + origin.x;
 			var yr:Float = -(matrix.b * origin.x + matrix.d * origin.y) + origin.y;
 			matrix.translate(-xr, -yr);
 			rotateXYZ(angle3D);
+			matrix.concat(_skewMatrix);
 			// move back after doing rotations
 			xr = -(matrix.a * origin.x + matrix.c * origin.y) + origin.x;
 			yr = -(matrix.b * origin.x + matrix.d * origin.y) + origin.y;
 			matrix.translate(xr, yr);
-
 		}
 		matrix.translate(-origin.x, -origin.y);
 		var _animOffset:FlxPoint = animation.curAnim?.offset ?? FlxPoint.weak();

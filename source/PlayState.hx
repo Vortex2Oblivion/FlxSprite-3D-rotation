@@ -21,27 +21,39 @@ class PlayState extends FlxState {
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
-		dumb.angle3D.x = (FlxG.mouse.viewY / FlxG.height) * 180 - 90;
-		dumb.angle3D.y = -(FlxG.mouse.viewX / FlxG.width)* 180 + 90;
+		/*dumb.angle3D.x = (FlxG.mouse.viewY / FlxG.height) * 180 - 90;
+		dumb.angle3D.y = -(FlxG.mouse.viewX / FlxG.width)* 180 + 90;*/
 		dumb.angle3D.z += FlxG.mouse.wheel;
-		/*dumb.angle3D.x = Math.cos(FlxG.game.ticks / 1000) * 45;
-			dumb.angle3D.y = Math.sin(FlxG.game.ticks / 1000) * 45; */
-		if (FlxG.keys.pressed.UP) {
-			dumb.animation.play("singUP", false);
-		} else if (FlxG.keys.pressed.DOWN) {
-			dumb.animation.play("singDOWN", false);
-		} else if (FlxG.keys.pressed.RIGHT) {
-			dumb.animation.play("singRIGHT", false);
-		} else if (FlxG.keys.pressed.LEFT) {
-			dumb.animation.play("singLEFT", false);
-		} else {
-			dumb.animation.play("idle", false);
-		}
+		dumb.animation.play("idle", false);
 		if(FlxG.keys.pressed.E){
 			FlxG.camera.zoom += elapsed;
 		}
 		if(FlxG.keys.pressed.Q){
 			FlxG.camera.zoom -= elapsed;
+		}
+		if(FlxG.keys.pressed.LEFT){
+			dumb.angle3D.y -= elapsed * 25;
+		}
+		if(FlxG.keys.pressed.RIGHT){
+			dumb.angle3D.y += elapsed * 25;
+		}
+		if(FlxG.keys.pressed.DOWN){
+			dumb.angle3D.x -= elapsed * 25;
+		}
+		if(FlxG.keys.pressed.UP){
+			dumb.angle3D.x += elapsed * 25;
+		}
+		if(FlxG.keys.pressed.W){
+			dumb.skew3D.y += elapsed * 25;
+		}
+		if(FlxG.keys.pressed.S){
+			dumb.skew3D.y -= elapsed * 25;
+		}
+		if(FlxG.keys.pressed.A){
+			dumb.skew3D.x -= elapsed * 25;
+		}
+		if(FlxG.keys.pressed.D){
+			dumb.skew3D.x += elapsed * 25;
 		}
 	}
 }
