@@ -1,5 +1,8 @@
 package;
 
+import flixel.FlxG;
+import flixel.util.FlxDestroyUtil;
+import lime.math.Vector2;
 import flixel.math.FlxMatrix;
 import flixel.graphics.frames.FlxFrame;
 import flixel.FlxCamera;
@@ -14,9 +17,17 @@ import openfl.geom.Vector3D;
  * @see https://github.com/raysan5/raylib/blob/7f8bf2233c29ebbd98566962bb3730095b11a4e2/src/raymath.h#L1790
  */
 class FlxSprite3D extends FlxSprite {
-	public var angle3D(default, null):Vector3D;
-	public var skew3D(default, null):Vector3D;
 
+	/**
+	 * The 3D angle of the sprite.
+	 */
+	public var angle3D(default, null):Vector3D;
+
+	/**
+	 * The 2D skew of the sprite.
+	 */
+	public var skew(default, null):FlxPoint;
+	
 	private var _rotationMatrix(default, null):FlxMatrix;
 	private var _skewMatrix(default, null):FlxMatrix;
 
@@ -25,12 +36,20 @@ class FlxSprite3D extends FlxSprite {
 		_rotationMatrix = new FlxMatrix();
 		_skewMatrix = new FlxMatrix();
 		angle3D = new Vector3D();
-		skew3D = new Vector3D();
+		skew = FlxPoint.get();
 	}
 
 	override function set_angle(Value:Float):Float {
 		angle3D.z = Value;
 		return super.set_angle(Value);
+	}
+
+	override function destroy() {
+		skew = FlxDestroyUtil.put(skew);
+		angle3D = null;
+		_skewMatrix = null;
+		_rotationMatrix = null;
+		super.destroy();
 	}
 
 	override function drawFrameComplex(frame:FlxFrame, camera:FlxCamera) {
@@ -42,9 +61,10 @@ class FlxSprite3D extends FlxSprite {
 			if (angle != 0) {
 				matrix.rotateWithTrig(_cosAngle, _sinAngle);
 			}
-			if (skew3D.x != 0 || skew3D.y != 0) {
-				_skewMatrix.b = Math.tan(skew3D.y * FlxAngle.TO_RAD);
-				_skewMatrix.c = Math.tan(skew3D.x * FlxAngle.TO_RAD);
+			if (skew.x != 0 || skew.y != 0) {
+				_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
+				_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
+				//_skewMatrix.d = Math.tan(skew3D.z * FlxAngle.TO_RAD);
 			}
 			// https://math.stackexchange.com/questions/62182/how-do-i-rotate-a-matrix-transformation-with-a-centered-origin
 			// offset

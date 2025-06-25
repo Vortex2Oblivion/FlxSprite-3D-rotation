@@ -44,16 +44,16 @@ class PlayState extends FlxState {
 			dumb.angle3D.x += elapsed * 25;
 		}
 		if(FlxG.keys.pressed.W){
-			dumb.skew3D.y += elapsed * 25;
+			dumb.skew.y += elapsed * 25;
 		}
 		if(FlxG.keys.pressed.S){
-			dumb.skew3D.y -= elapsed * 25;
+			dumb.skew.y -= elapsed * 25;
 		}
 		if(FlxG.keys.pressed.A){
-			dumb.skew3D.x -= elapsed * 25;
+			dumb.skew.x -= elapsed * 25;
 		}
 		if(FlxG.keys.pressed.D){
-			dumb.skew3D.x += elapsed * 25;
+			dumb.skew.x += elapsed * 25;
 		}
 	}
 }
