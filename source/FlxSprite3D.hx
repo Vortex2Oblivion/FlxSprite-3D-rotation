@@ -1,5 +1,6 @@
 package;
 
+import flixel.math.FlxMatrix;
 import openfl.geom.Matrix;
 import flixel.graphics.frames.FlxFrame;
 import flixel.FlxCamera;
@@ -16,9 +17,12 @@ import openfl.geom.Vector3D;
 class FlxSprite3D extends FlxSprite {
 	public var angle3D(default, null):Vector3D;
 
+	private var _rotationMatrix(default, null):FlxMatrix;
+
 	override function initVars() {
 		super.initVars();
-		angle3D = new Vector3D(0, 0, 0);
+		_rotationMatrix = new FlxMatrix();
+		angle3D = new Vector3D();
 	}
 
 	override function set_angle(Value:Float):Float {
@@ -86,11 +90,11 @@ class FlxSprite3D extends FlxSprite {
 		var cosx:Float = Math.cos(FlxAngle.asRadians(-angle.x));
 		var sinx:Float = Math.sin(FlxAngle.asRadians(-angle.x));
 
-		/*_matrix.a = cosz * cosy;
-		_matrix.b = (cosz * siny * sinx) - (sinz * cosx);
+		_rotationMatrix.a = cosz * cosy;
+		_rotationMatrix.b = (cosz * siny * sinx) - (sinz * cosx);
 
-		_matrix.c = sinz * cosy;
-		_matrix.d = (sinz * siny * sinx) + (cosz * cosx);*/
-		_matrix.concat(new Matrix(cosz * cosy, (cosz * siny * sinx) - (sinz * cosx), sinz * cosy, (sinz * siny * sinx) + (cosz * cosx)));
+		_rotationMatrix.c = sinz * cosy;
+		_rotationMatrix.d = (sinz * siny * sinx) + (cosz * cosx);
+		_matrix.concat(_rotationMatrix);
 	}
 }
