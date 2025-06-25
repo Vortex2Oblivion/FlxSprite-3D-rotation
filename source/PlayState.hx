@@ -1,6 +1,5 @@
 package;
 
-import flixel.util.FlxColor;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -11,11 +10,10 @@ class PlayState extends FlxState {
 	override public function create() {
 		super.create();
 		dumb = new FlxSprite3D();
-		/*/dumb.frames = FlxAtlasFrames.fromSparrow("assets/images/DADDY_DEAREST.png", "assets/images/DADDY_DEAREST.xml");
+		dumb.frames = FlxAtlasFrames.fromSparrow("assets/images/DADDY_DEAREST.png", "assets/images/DADDY_DEAREST.xml");
 		for (anim in ["idle", "singDOWN", "singUP", "singLEFT", "singRIGHT"]) {
 			dumb.animation.addByPrefix(anim, anim, 24, false);
-		}*/
-		dumb.makeGraphic(400, 400, FlxColor.WHITE);
+		}
 		dumb.screenCenter();
 		dumb.antialiasing = true;
 		add(dumb);
@@ -28,7 +26,7 @@ class PlayState extends FlxState {
 		dumb.angle3D.z += FlxG.mouse.wheel;
 		/*dumb.angle3D.x = Math.cos(FlxG.game.ticks / 1000) * 45;
 			dumb.angle3D.y = Math.sin(FlxG.game.ticks / 1000) * 45; */
-		/*if (FlxG.keys.pressed.UP) {
+		if (FlxG.keys.pressed.UP) {
 			dumb.animation.play("singUP", false);
 		} else if (FlxG.keys.pressed.DOWN) {
 			dumb.animation.play("singDOWN", false);
@@ -38,7 +36,7 @@ class PlayState extends FlxState {
 			dumb.animation.play("singLEFT", false);
 		} else {
 			dumb.animation.play("idle", false);
-		}*/
+		}
 		if(FlxG.keys.pressed.E){
 			FlxG.camera.zoom += elapsed;
 		}

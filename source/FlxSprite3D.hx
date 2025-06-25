@@ -1,5 +1,6 @@
 package;
 
+import openfl.geom.Matrix;
 import flixel.graphics.frames.FlxFrame;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
@@ -34,12 +35,17 @@ class FlxSprite3D extends FlxSprite {
 			if (angle != 0) {
 				matrix.rotateWithTrig(_cosAngle, _sinAngle);
 			}
-			rotateXYZ(angle3D);
 			// https://math.stackexchange.com/questions/62182/how-do-i-rotate-a-matrix-transformation-with-a-centered-origin
+			// offset
 			var xr:Float = -(matrix.a * origin.x + matrix.c * origin.y) + origin.x;
 			var yr:Float = -(matrix.b * origin.x + matrix.d * origin.y) + origin.y;
-
+			matrix.translate(-xr, -yr);
+			rotateXYZ(angle3D);
+			// move back after doing rotations
+			xr = -(matrix.a * origin.x + matrix.c * origin.y) + origin.x;
+			yr = -(matrix.b * origin.x + matrix.d * origin.y) + origin.y;
 			matrix.translate(xr, yr);
+
 		}
 		matrix.translate(-origin.x, -origin.y);
 		var _animOffset:FlxPoint = animation.curAnim?.offset ?? FlxPoint.weak();
@@ -80,10 +86,11 @@ class FlxSprite3D extends FlxSprite {
 		var cosx:Float = Math.cos(FlxAngle.asRadians(-angle.x));
 		var sinx:Float = Math.sin(FlxAngle.asRadians(-angle.x));
 
-		_matrix.a = cosz * cosy;
+		/*_matrix.a = cosz * cosy;
 		_matrix.b = (cosz * siny * sinx) - (sinz * cosx);
 
 		_matrix.c = sinz * cosy;
-		_matrix.d = (sinz * siny * sinx) + (cosz * cosx);
+		_matrix.d = (sinz * siny * sinx) + (cosz * cosx);*/
+		_matrix.concat(new Matrix(cosz * cosy, (cosz * siny * sinx) - (sinz * cosx), sinz * cosy, (sinz * siny * sinx) + (cosz * cosx)));
 	}
 }
