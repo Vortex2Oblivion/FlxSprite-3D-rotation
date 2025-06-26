@@ -13,8 +13,10 @@ import openfl.geom.Vector3D;
 
 /**
  * Performs 3D rotations on a 2D FlxSprite
+ * Also has skew capabilities (2D)
  * @see https://math.stackexchange.com/questions/62182/how-do-i-rotate-a-matrix-transformation-with-a-centered-origin
  * @see https://github.com/raysan5/raylib/blob/7f8bf2233c29ebbd98566962bb3730095b11a4e2/src/raymath.h#L1790
+ * @author Vortex
  */
 class FlxSprite3D extends FlxSprite {
 
