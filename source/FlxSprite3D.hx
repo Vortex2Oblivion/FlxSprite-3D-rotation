@@ -71,8 +71,8 @@ class FlxSprite3D extends FlxSprite {
 			var xr:Float = -(matrix.a * origin.x + matrix.c * origin.y) + origin.x;
 			var yr:Float = -(matrix.b * origin.x + matrix.d * origin.y) + origin.y;
 			matrix.translate(-xr, -yr);
-			rotateXYZ(angle3D);
 			matrix.concat(_skewMatrix);
+			rotateXYZ(angle3D);
 			// move back after doing rotations
 			xr = -(matrix.a * origin.x + matrix.c * origin.y) + origin.x;
 			yr = -(matrix.b * origin.x + matrix.d * origin.y) + origin.y;

@@ -10,10 +10,11 @@ class PlayState extends FlxState {
 	override public function create() {
 		super.create();
 		dumb = new FlxSprite3D();
-		dumb.frames = FlxAtlasFrames.fromSparrow("assets/images/DADDY_DEAREST.png", "assets/images/DADDY_DEAREST.xml");
+		/*dumb.frames = FlxAtlasFrames.fromSparrow("assets/images/DADDY_DEAREST.png", "assets/images/DADDY_DEAREST.xml");
 		for (anim in ["idle", "singDOWN", "singUP", "singLEFT", "singRIGHT"]) {
 			dumb.animation.addByPrefix(anim, anim, 24, false);
-		}
+		}*/
+		dumb.makeGraphic(800, 400);
 		dumb.screenCenter();
 		dumb.antialiasing = true;
 		add(dumb);
@@ -24,7 +25,7 @@ class PlayState extends FlxState {
 		/*dumb.angle3D.x = (FlxG.mouse.viewY / FlxG.height) * 180 - 90;
 		dumb.angle3D.y = -(FlxG.mouse.viewX / FlxG.width)* 180 + 90;*/
 		dumb.angle3D.z += FlxG.mouse.wheel;
-		dumb.animation.play("idle", false);
+		//dumb.animation.play("idle", false);
 		if(FlxG.keys.pressed.E){
 			FlxG.camera.zoom += elapsed;
 		}
