@@ -1,4 +1,4 @@
-package;
+package modcharting;
 
 import flixel.FlxG;
 import flixel.util.FlxDestroyUtil;
@@ -19,7 +19,6 @@ import openfl.geom.Vector3D;
  * @author Vortex
  */
 class FlxSprite3D extends FlxSprite {
-
 	/**
 	 * The 3D angle of the sprite.
 	 */
@@ -29,7 +28,7 @@ class FlxSprite3D extends FlxSprite {
 	 * The 2D skew of the sprite.
 	 */
 	public var skew(default, null):FlxPoint;
-	
+
 	private var _rotationMatrix(default, null):FlxMatrix;
 	private var _skewMatrix(default, null):FlxMatrix;
 
@@ -42,8 +41,11 @@ class FlxSprite3D extends FlxSprite {
 	}
 
 	override function set_angle(Value:Float):Float {
-		angle3D.z = Value;
-		return super.set_angle(Value);
+		return angle3D.z = Value;
+	}
+
+	override function get_angle():Float {
+		return angle3D.z;
 	}
 
 	override function destroy() {
@@ -66,15 +68,15 @@ class FlxSprite3D extends FlxSprite {
 			if (skew.x != 0 || skew.y != 0) {
 				_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
 				_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
-				//_skewMatrix.d = Math.tan(skew3D.z * FlxAngle.TO_RAD);
+				// _skewMatrix.d = Math.tan(skew3D.z * FlxAngle.TO_RAD);
 			}
 			// https://math.stackexchange.com/questions/62182/how-do-i-rotate-a-matrix-transformation-with-a-centered-origin
 			// offset
 			var xr:Float = -(matrix.a * origin.x + matrix.c * origin.y) + origin.x;
 			var yr:Float = -(matrix.b * origin.x + matrix.d * origin.y) + origin.y;
 			matrix.translate(-xr, -yr);
-			matrix.concat(_skewMatrix);
 			rotateXYZ(angle3D);
+			matrix.concat(_skewMatrix);
 			// move back after doing rotations
 			xr = -(matrix.a * origin.x + matrix.c * origin.y) + origin.x;
 			yr = -(matrix.b * origin.x + matrix.d * origin.y) + origin.y;
@@ -110,14 +112,14 @@ class FlxSprite3D extends FlxSprite {
 	 * @see https://github.com/raysan5/raylib/blob/7f8bf2233c29ebbd98566962bb3730095b11a4e2/src/raymath.h#L1790
 	 */
 	private function rotateXYZ(angle:Vector3D) {
-		var cosz:Float = Math.cos(FlxAngle.asRadians(-angle.z));
-		var sinz:Float = Math.sin(FlxAngle.asRadians(-angle.z));
+		var cosz:Float = Math.cos(-FlxAngle.asRadians(angle.z));
+		var sinz:Float = Math.sin(-FlxAngle.asRadians(angle.z));
 
-		var cosy:Float = Math.cos(FlxAngle.asRadians(-angle.y));
-		var siny:Float = Math.sin(FlxAngle.asRadians(-angle.y));
+		var cosy:Float = Math.cos(-FlxAngle.asRadians(angle.y));
+		var siny:Float = Math.sin(-FlxAngle.asRadians(angle.y));
 
-		var cosx:Float = Math.cos(FlxAngle.asRadians(-angle.x));
-		var sinx:Float = Math.sin(FlxAngle.asRadians(-angle.x));
+		var cosx:Float = Math.cos(-FlxAngle.asRadians(angle.x));
+		var sinx:Float = Math.sin(-FlxAngle.asRadians(angle.x));
 
 		_rotationMatrix.a = cosz * cosy;
 		_rotationMatrix.b = (cosz * siny * sinx) - (sinz * cosx);
