@@ -1,6 +1,7 @@
 package;
 
-import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.util.FlxColor;
+import flixel.addons.display.FlxGridOverlay;
 import flixel.FlxG;
 import flixel.FlxState;
 
@@ -9,12 +10,9 @@ class PlayState extends FlxState {
 
 	override public function create() {
 		super.create();
+		bgColor = FlxColor.WHITE;
 		dumb = new FlxSprite3D();
-		/*dumb.frames = FlxAtlasFrames.fromSparrow("assets/images/DADDY_DEAREST.png", "assets/images/DADDY_DEAREST.xml");
-		for (anim in ["idle", "singDOWN", "singUP", "singLEFT", "singRIGHT"]) {
-			dumb.animation.addByPrefix(anim, anim, 24, false);
-		}*/
-		dumb.makeGraphic(800, 400);
+		dumb.loadGraphic(FlxGridOverlay.createGrid(100, 100, 200, 200, true, FlxColor.BLACK, FlxColor.MAGENTA));
 		dumb.screenCenter();
 		dumb.antialiasing = true;
 		add(dumb);
@@ -22,38 +20,39 @@ class PlayState extends FlxState {
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
-		/*dumb.angle3D.x = (FlxG.mouse.viewY / FlxG.height) * 180 - 90;
-		dumb.angle3D.y = -(FlxG.mouse.viewX / FlxG.width)* 180 + 90;*/
-		dumb.angle3D.z += FlxG.mouse.wheel;
-		//dumb.animation.play("idle", false);
-		if(FlxG.keys.pressed.E){
+		dumb.angle3D.x = (FlxG.mouse.viewY / FlxG.height) * 180 - 90;
+		dumb.angle3D.y = -(FlxG.mouse.viewX / FlxG.width) * 180 + 90;
+		dumb.angle3D.z += FlxG.mouse.wheel * 15;
+		//dumb.scale.set(Math.sin(FlxG.game.ticks / 1000) * 0.5 + 1, Math.sin(FlxG.game.ticks / 1000) * 0.5 + 1);
+
+		if (FlxG.keys.pressed.E) {
 			FlxG.camera.zoom += elapsed;
 		}
-		if(FlxG.keys.pressed.Q){
+		if (FlxG.keys.pressed.Q) {
 			FlxG.camera.zoom -= elapsed;
 		}
-		if(FlxG.keys.pressed.LEFT){
+		if (FlxG.keys.pressed.LEFT) {
 			dumb.angle3D.y -= elapsed * 25;
 		}
-		if(FlxG.keys.pressed.RIGHT){
+		if (FlxG.keys.pressed.RIGHT) {
 			dumb.angle3D.y += elapsed * 25;
 		}
-		if(FlxG.keys.pressed.DOWN){
+		if (FlxG.keys.pressed.DOWN) {
 			dumb.angle3D.x -= elapsed * 25;
 		}
-		if(FlxG.keys.pressed.UP){
+		if (FlxG.keys.pressed.UP) {
 			dumb.angle3D.x += elapsed * 25;
 		}
-		if(FlxG.keys.pressed.W){
+		if (FlxG.keys.pressed.W) {
 			dumb.skew.y += elapsed * 25;
 		}
-		if(FlxG.keys.pressed.S){
+		if (FlxG.keys.pressed.S) {
 			dumb.skew.y -= elapsed * 25;
 		}
-		if(FlxG.keys.pressed.A){
+		if (FlxG.keys.pressed.A) {
 			dumb.skew.x -= elapsed * 25;
 		}
-		if(FlxG.keys.pressed.D){
+		if (FlxG.keys.pressed.D) {
 			dumb.skew.x += elapsed * 25;
 		}
 	}
