@@ -1,4 +1,4 @@
-package modcharting;
+package;
 
 import math.FlxPoint3D;
 import flixel.addons.effects.FlxSkewedSprite;
